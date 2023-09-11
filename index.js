@@ -152,52 +152,13 @@ class Snake {
       if (this.status !== 'running') {
         return
       }
-      let { x, y } = snake.at(-1);
-      switch (direction) {
-        case "right":
-          x += gap;
-          break;
-        case "left":
-          x -= gap;
-          break;
-        case "top":
-          y -= gap;
-          break;
-        case "bottom":
-          y += gap;
-          break;
-        default:
-          break;
-      }
-      if (x === this.food.x && y === this.food.y) {
-        this.score += 10
-        // 吃到了食物
-        let { x, y } = snake[0];
-        switch (direction) {
-          case "right":
-            x -= gap;
-            break;
-          case "left":
-            x += gap;
-            break;
-          case "top":
-            y += gap;
-            break;
-          case "bottom":
-            y -= gap;
-            break;
-          default:
-            break;
-        }
-        // 增加一节
-        snake.unshift({ x, y });
-        // 清空食物
-        ctx.clearRect(this.food.x, this.food.y, gap, gap);
-        // 重新生成食物
-        this.food = this.randomFood();
-      }
+      // 更新蛇的坐标
+      // 获取增加的节点
+      const { x, y } = this.updateSnake()
+      // 吃
+      this.handleEat(x, y)
+      // 游戏结束
       if (this.isHitWall({ x, y }) || this.isEatSelf({ x, y })) {
-        // 游戏结束
         this.status = 'over'
         this.onChangeCallback({
           type: 'over'
@@ -205,19 +166,72 @@ class Snake {
         clearInterval(this.timer);
         return
       }
+      // 尾巴去掉一格
+      snake.shift();
+      // 头部新增一格
+      snake.push({ x, y });
       // 清空画布
       ctx.clearRect(0, 0, width, height);
       // 画格子
       this.drawGrid();
       // 画食物
       this.drawFood();
-      // 尾巴去掉一格
-      snake.shift();
-      // 头部新增一格
-      snake.push({ x, y });
       // 重新画蛇
       this.drawSnake();
     }, 150);
+  }
+
+  updateSnake() {
+    const { snake, direction, gap } = this
+    let { x, y } = snake.at(-1);
+    switch (direction) {
+      case "right":
+        x += gap;
+        break;
+      case "left":
+        x -= gap;
+        break;
+      case "top":
+        y -= gap;
+        break;
+      case "bottom":
+        y += gap;
+        break;
+      default:
+        break;
+    }
+    return { x, y }
+  }
+
+  handleEat(x, y) {
+    const { snake, direction, gap, ctx } = this
+    if (x === this.food.x && y === this.food.y) {
+      this.score += 10
+      // 吃到了食物
+      let { x, y } = snake[0];
+      switch (direction) {
+        case "right":
+          x -= gap;
+          break;
+        case "left":
+          x += gap;
+          break;
+        case "top":
+          y += gap;
+          break;
+        case "bottom":
+          y -= gap;
+          break;
+        default:
+          break;
+      }
+      // 尾部增加一节
+      snake.unshift({ x, y });
+      // 清空食物
+      ctx.clearRect(this.food.x, this.food.y, gap, gap);
+      // 重新生成食物
+      this.food = this.randomFood();
+    }
   }
 
   // 判断是否撞墙
