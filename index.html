@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        /* min-height: 100vh; */
+        display: flex;
+        flex-direction: column;
+        /* justify-content: center; */
+        align-items: center;
+        padding: 24px;
+      }
+      .rule {
+        margin-bottom: 20px;
+      }
+      .tool-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 300px;
+        margin-bottom: 20px;
+      }
+      #canvas {
+        margin-bottom: 40px;
+      }
+      .arrow-key {
+        position: relative;
+        top: 20px;
+      }
+      .arrow-key button {
+        position: absolute;
+        padding: 6px 18px;
+      }
+      .arrow-key #top {
+        top: -40px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      .arrow-key #bottom {
+        top: 40px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      .arrow-key #left {
+        left: -100px;
+      }
+      .arrow-key #right {
+        right: -100px;
+      }
+    </style>
+  </head>
+  <body>
+    <ul class="rule">
+      <li>pc端使用键盘上的上下左右键可控制方向，移动端使用屏幕上的按钮控制方向</li>
+      <li>不能往反方向移动</li>
+      <li>蛇头撞到地图边缘或自己的身体、即游戏结束</li>
+    </ul>
+    <div class="tool-bar">
+      <div>
+        分数：<span id="score">0</span>
+      </div>
+      <div>
+        <button id="start">开始游戏</button>
+        <button id="stop">暂停</button>
+        <button id="continue">继续</button>
+        <button id="restart">重新开始</button>
+      </div>
+    </div>
+    <canvas id="canvas"></canvas>
+    <div class="arrow-key">
+      <button id="top">上</button>
+      <button id="bottom">下</button>
+      <button id="left">左</button>
+      <button id="right">右</button>
+    </div>
+
+    <script src="./index.js"></script>
+    <script>
+      let snake = new Snake(document.getElementById("canvas"), { width: 300, height: 360 });
+      document.getElementById("start").onclick = () => {
+        snake.start();
+      }
+      document.getElementById("stop").onclick = () => {
+        snake.stop();
+      }
+      document.getElementById("continue").onclick = () => {
+        snake.continue();
+      }
+      document.getElementById("restart").onclick = () => {
+        snake.restart();
+      }
+
+      // 移动端方向控制
+      document.getElementById('top').onclick = () => {
+        snake.toTop();
+      }
+      document.getElementById('bottom').onclick = () => {
+        snake.toBottom();
+      }
+      document.getElementById('left').onclick = () => {
+        snake.toLeft();
+      }
+      document.getElementById('right').onclick = () => {
+        snake.toRight();
+      }
+      
+      // 变化事件、例如加分、游戏结束
+      snake.setOnChangeCallback(({ type, data }) => {
+        if (type === 'score') {
+          document.getElementById("score").innerText = data;
+        } else if (type === 'over') {
+          showToast()
+        }
+      })
+
+      function showToast(text = 'Game Over') {
+        Toastify({
+          text,
+          duration: 3000,
+          gravity: "top", // `top` or `bottom`
+          position: "center", // `left`, `center` or `right`
+          stopOnFocus: true, // Prevents dismissing of toast on hover
+          style: {
+            background: "linear-gradient(to right, #00b09b, #96c93d)",
+          },
+          onClick: function(){} // Callback after click
+        }).showToast();
+      }
+    </script>
+  </body>
+</html>
