@@ -10,6 +10,9 @@ class Snake {
     this.gap = 10; 
     // 状态
     this.status = 'stop'
+    // 速度
+    this.speed = 150
+    // 初始化
     this.init();
     // 分数回调
     this.onChangeCallback = null;
@@ -178,7 +181,7 @@ class Snake {
       this.drawFood();
       // 重新画蛇
       this.drawSnake();
-    }, 150);
+    }, this.speed);
   }
 
   updateSnake() {
@@ -267,7 +270,7 @@ class Snake {
   // 绑定键盘操作
   bindEvent() {
     const keys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']
-    document.addEventListener("keydown", (event) => {
+    document.addEventListener("keydown", debounce((event) => {
       if (!keys.includes(event.key)) return
       if (event.key === "ArrowUp" && this.direction !== "bottom") {
         this.toTop()
@@ -278,6 +281,18 @@ class Snake {
       } else if (event.key === "ArrowRight" && this.direction !== "left") {
         this.toRight()
       }
-    });
+    }), this.speed);
   }
+}
+
+function debounce(func, wait) {
+  let timeout;
+  return function () {
+    const context = this;
+    const args = arguments;
+    if (timeout) clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      func.apply(context, args);
+    }, wait);
+  };
 }
