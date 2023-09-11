@@ -251,18 +251,22 @@ class Snake {
   }
 
   toTop() {
+    if (this.direction === "bottom") return;
     this.direction = "top";
     this.move();
   }
   toBottom() {
+    if (this.direction === "top") return;
     this.direction = "bottom";
     this.move();
   }
   toLeft() {
+    if (this.direction === "right") return;
     this.direction = "left";
     this.move();
   }
   toRight() {
+    if (this.direction === "left") return;
     this.direction = "right";
     this.move();
   }
